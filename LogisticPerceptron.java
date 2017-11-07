@@ -22,7 +22,7 @@ public class LogisticPerceptron implements Classifier{
 	int epochs = 0; 
 	// Learning Constant (a decimal real value)
 	double learningRate = 0; 
-	//logistic function squashing parameter, a decimal real value
+	// Logistic function squashing parameter, a decimal real value
 	double lambda = 0; 
 	
 	public LogisticPerceptron(String[] options){
