@@ -15,6 +15,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 
 
+
 public class LogisticPerceptron implements Classifier{
 	
 	int bias = 0; 
@@ -42,9 +43,13 @@ public class LogisticPerceptron implements Classifier{
 
 	double learningConstant = 0; 
 	
-	// These should all be overrides 
+	// Builds classifier with the provided dataset
 	@Override
-	public void buildClassifier(Instances arg0) throws Exception {
+	public void buildClassifier(Instances dataset) throws Exception {
+		
+		// Check for instances num is 10. 
+		int numInstances = dataset.numInstances(); 
+		
 		
 		for(int epoch = 0; epoch < epochs; epoch++){
 			System.out.println("Epoch " + epoch + ": ");
@@ -57,8 +62,9 @@ public class LogisticPerceptron implements Classifier{
 		// TODO Auto-generated method stub
 		return 0;
 	}
-	//soemthing
-	// His code but instead of if check i just do a simple chedk fo rnow
+
+	// His code but instead of if check i just do a simple check for now
+	// Return probabilities array of the prediction for the weka core. 
 	@Override
 	public double[] distributionForInstance(Instance instance) throws Exception {
 		double[] result = new double[2];
