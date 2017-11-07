@@ -16,24 +16,39 @@ import weka.core.Instances;
 
 
 public class LogisticPerceptron implements Classifier{
-
 	
+	int bias = 0; 
+	String file = ""; 
+	int epochs = 0; 
+	// Learning Constant (a decimal real value)
+	double learningRate = 0; 
+	//logistic function squashing parameter, a decimal real value
+	double lambda = 0; 
 	
 	public LogisticPerceptron(String[] options){
+		
+		file = options[0]; 
+		epochs = Integer.parseInt(options[1]);
+		learningRate = Double.parseDouble(options[2]);
+		lambda = Double.parseDouble(options[3]);
+		bias = 1; 
+			
 		System.out.print("University of Central Florida\n"
 			+ "CAP4630 Artificial Intelligence - Fall 2017\n"
-			+	"Logisitc Perceptron Classifier by Matthew Taubler and Brooke Norton\n");
+			+	"Logisitc Perceptron Classifier by Matthew Taubler and Brooke Norton\n\n");
+			
 	}
 	
 
-	int bias = 1; 
-	int epochs = 0;
 	double learningConstant = 0; 
 	
 	// These should all be overrides 
 	@Override
 	public void buildClassifier(Instances arg0) throws Exception {
-		// TODO Auto-generated method stub
+		
+		for(int epoch = 0; epoch < epochs; epoch++){
+			System.out.println("Epoch " + epoch + ": ");
+		}
 		
 	}
 
@@ -66,11 +81,11 @@ public class LogisticPerceptron implements Classifier{
 	
 	public String toString(){
 		String report = "";
-		report = "Source file :" 
-			+ 		"Number of training epochs: "
-			+ 		"Learning rate : "
-			+ 		"Lamda Value :   "	
-			+			"Final Weights:"; 
+		report = "Source file : " + file + "\n" 
+			+ 		"Training epochs: " + epochs + "\n"
+			+ 		"Learning rate : " + learningRate + "\n"
+			+ 		"Lamda Value : " + lambda + "\n"	
+			+			"Final Weights: " + "\n"; 
 		return report;
 	}
 	
