@@ -10,6 +10,8 @@
 import java.io.BufferedReader;
 
 import weka.classifiers.Classifier;
+import weka.core.*; 
+import weka.core.Capabilities.*; 
 import weka.core.Capabilities;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -45,11 +47,13 @@ public class LogisticPerceptron implements Classifier{
 	
 	// Builds classifier with the provided dataset
 	@Override
-	public void buildClassifier(Instances dataset) throws Exception {
+	public void buildClassifier(Instances data) throws Exception {
 		
 		// Check for instances num is 10. 
-		int numInstances = dataset.numInstances(); 
-		
+		int numInstances = data.numInstances(); 
+		//getCapabilities().testWithFail(data);
+		data = new Instances(data);
+		data.deleteWithMissingClass(); 
 		
 		for(int epoch = 0; epoch < epochs; epoch++){
 			System.out.println("Epoch " + epoch + ": ");
@@ -57,6 +61,7 @@ public class LogisticPerceptron implements Classifier{
 		
 	}
 
+	// empty concrete method
 	@Override
 	public double classifyInstance(Instance arg0) throws Exception {
 		// TODO Auto-generated method stub
@@ -79,9 +84,9 @@ public class LogisticPerceptron implements Classifier{
 		return result;
 	}
 
+	// Empty concrete method
 	@Override
 	public Capabilities getCapabilities() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
@@ -90,7 +95,8 @@ public class LogisticPerceptron implements Classifier{
 		report = "Source file : " + file + "\n" 
 			+ 		"Training epochs: " + epochs + "\n"
 			+ 		"Learning rate : " + learningRate + "\n"
-			+ 		"Lamda Value : " + lambda + "\n"	
+			+ 		"Lamda Value : " + lambda + "\n\n"
+			+     "Total # weight updates = \n"
 			+			"Final Weights: " + "\n"; 
 		return report;
 	}
