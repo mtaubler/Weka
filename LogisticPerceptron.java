@@ -48,7 +48,9 @@ public class LogisticPerceptron implements Classifier{
 	// Builds classifier with the provided dataset
 	@Override
 	public void buildClassifier(Instances data) throws Exception {
-		
+		double weight = 0;
+		double weightChange = 0;
+		double output = 0;
 		// Check for instances num is 10. 
 		int numInstances = data.numInstances(); 
 		//getCapabilities().testWithFail(data);
@@ -56,15 +58,26 @@ public class LogisticPerceptron implements Classifier{
 		data.deleteWithMissingClass(); 
 		
 		for(int epoch = 0; epoch < epochs; epoch++){
-			System.out.println("Epoch " + epoch + ": ");
+			System.out.print("Epoch " + (epoch + 1) + ": ");
+			for (int i = 0; i < epoch; i++){
+				output = weight * data.get(i).value(0);
+				if (output >= 0){
+					output = 1;
+				}else {
+					output = 0;
+				}
+				System.out.print(output); 
+			}
+			weightChange = learningRate * (data.get(epoch).value(1) - output)* data.get(epoch).value(0);
+			weight = weight + weightChange;
+			System.out.println();
 		}
-		
+
 	}
 
-	// empty concrete method
+	// Empty concrete method
 	@Override
 	public double classifyInstance(Instance arg0) throws Exception {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
