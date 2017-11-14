@@ -65,7 +65,7 @@ public class LogisticWeka {
 		options[0] = args[0];   // input file name
 		options[1] = args[1];   // number of training epochs
 		options[2] = args[2];   // learning rate
-      		options[3] = args[3];   // logistic function squashing parameter
+    options[3] = args[3];   // logistic function squashing parameter
 		Classifier model = new LogisticPerceptron( options );
 						
 		// Run classifier and report results
