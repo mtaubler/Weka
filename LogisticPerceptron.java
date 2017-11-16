@@ -29,17 +29,19 @@ public class LogisticPerceptron implements Classifier{
 	double learningRate = 0; 
 	// Logistic function squashing parameter, a decimal real value
 	double lambda = 0; 
-	double weights[]; 
+	double weights[];
 	double weightChange = 0;
+	int totalWeightUpdates = 0;
 	
 	public LogisticPerceptron(String[] options){
-		
+		// Parse the input string
 		file = options[0]; 
 		epochs = Integer.parseInt(options[1]);
 		learningRate = Double.parseDouble(options[2]);
 		lambda = Double.parseDouble(options[3]);
+		// Set bias to constant 1
 		bias = 1; 
-			
+
 		System.out.print("University of Central Florida\n"
 			+ "CAP4630 Artificial Intelligence - Fall 2017\n"
 			+	"Logisitc Perceptron Classifier by Matthew Taubler and Brooke Norton\n\n");
@@ -49,6 +51,7 @@ public class LogisticPerceptron implements Classifier{
 	// Builds classifier with the provided dataset
 	@Override
 	public void buildClassifier(Instances data) throws Exception {	
+		
 		// Get number of training instances 
 		int numInstances = data.numInstances(); 
 		
@@ -56,29 +59,42 @@ public class LogisticPerceptron implements Classifier{
 		//getCapabilities().testWithFail(data);
 		data = new Instances(data);
 		data.deleteWithMissingClass(); 
-	
-		// Initialize the weights
-		weights = new double[numInstances];
-		for(int i = 0; i < weights.length; i++) {
-			weights[i] = ThreadLocalRandom.current().nextDouble(0,1); 
+		Instance first = data.firstInstance();
+		
+		// Initialize the weights vector
+		weights = new double[data.numAttributes()];
+		for(int i = 0; i < first.numAttributes(); i++){
+			weights[i] = 0.0;
 		}
+		
+		// Adjust last weight to account for the bias
+		weights[weights.length - 1] = bias;
 	
-		// Perceptron Model
+		// Perceptron Rule
 		for(int epoch = 0; epoch < epochs; epoch++){
 			
-			System.out.print("Epoch " + (epoch + 1) + ": ");
+			System.out.print("Epoch " + epoch + ": ");
 			
 			for (int i = 0; i < numInstances; i++){
 				
-				Instance instance = data.instance(i); 
+				Instance instance = data.instance(i);
+				double expected = predict(instance);
+				double actual = getActual(instance);
+			
+				//System.out.println("comparing actual:" + actual + " to expected: " + expected);
 				
-				double result [] = distributionForInstance(instance);
-				int comparison = (int)(result[0] - result[1]);
-				System.out.print(comparison);
-				
-				weightChange = learningRate * (instance.value(1) - comparison) * instance.value(0);
-				for (int j = 0; j < weights.length; j++){
-					weights[j] += weightChange;
+				if (actual == expected){
+					System.out.print(1);
+				} else {
+					System.out.print(0);
+					for (int j = 0; j < weights.length - 1; j++){
+						weightChange = (2 * actual) * learningRate * instance.value(j);
+						weights[j] += weightChange;
+					}
+					// Update the weight accounted for bias
+					weightChange = (2 * actual) * learningRate  * getActual(instance);
+					weights[weights.length - 1] += weightChange;
+					totalWeightUpdates++;
 				}
 			}
 			System.out.println();
@@ -86,11 +102,11 @@ public class LogisticPerceptron implements Classifier{
 	}
 	
 	public double predict(Instance instance){
-		double result = 0;  
+		double sum = 0;  
 		for (int i = 0; i < weights.length; i++){
-			result += bias * weights[i] * instance.value(0);
+			sum += bias * weights[i] * instance.value(0);
 		}
-		return (result >= 0) ? 1 : -1; 
+		return (sum >= 0) ? 1 : -1; 
 	}
 	
 	// Provided code from lecture slides
@@ -109,14 +125,22 @@ public class LogisticPerceptron implements Classifier{
 		return result;
 	}
 	
+	public double getActual(Instance instance){
+		if (instance.value(2) == 0){
+			return 1;
+		} else {
+			return -1;
+		}
+	}
+	
 	public String toString(){
 		String report = "";
 		report = "Source file : " + file + "\n" 
 			+ 		"Training epochs: " + epochs + "\n"
 			+ 		"Learning rate : " + learningRate + "\n"
 			+ 		"Lamda Value : " + lambda + "\n\n"
-			+     "Total # weight updates = \n"
-			+			"Final Weights: " + "\n"; 
+			+     "Total # weight updates = " + totalWeightUpdates + "\n"
+			+			"Final Weights: \n" + weights[0] +"\n" + weights[1] + "\n" + weights[2];
 		return report;
 	}
 
@@ -134,5 +158,9 @@ public class LogisticPerceptron implements Classifier{
 	}
 }
 
+//for(int i = 0; i < weights.length; i++) 
+//{
+	//weights[i] = ThreadLocalRandom.current().nextDouble(0,1); 
+//}
 
 
