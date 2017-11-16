@@ -17,7 +17,7 @@ import weka.core.Capabilities.*;
 import weka.core.Capabilities;
 import weka.core.Instance;
 import weka.core.Instances;
-
+import java.lang.Math;
 
 
 public class LogisticPerceptron implements Classifier{
@@ -29,6 +29,8 @@ public class LogisticPerceptron implements Classifier{
 	double learningRate = 0; 
 	// Logistic function squashing parameter, a decimal real value
 	double lambda = 0; 
+	double e = 2.71828;
+	// Weight tracking
 	double weights[];
 	double weightChange = 0;
 	int totalWeightUpdates = 0;
@@ -56,14 +58,12 @@ public class LogisticPerceptron implements Classifier{
 		int numInstances = data.numInstances(); 
 		
 		// Get data
-		//getCapabilities().testWithFail(data);
 		data = new Instances(data);
 		data.deleteWithMissingClass(); 
-		Instance first = data.firstInstance();
 		
 		// Initialize the weights vector
 		weights = new double[data.numAttributes()];
-		for(int i = 0; i < first.numAttributes(); i++){
+		for (int i = 0; i < data.numAttributes(); i++){
 			weights[i] = 0.0;
 		}
 	
@@ -78,7 +78,7 @@ public class LogisticPerceptron implements Classifier{
 				double expected = predict(instance);
 				double actual = getActual(instance);
 			
-				//System.out.println("comparing actual:" + actual + " to expected: " + expected);
+				System.out.println("comparing actual:" + actual + " to expected: " + expected);
 				
 				if (actual == expected){
 					// Do nothing
@@ -106,9 +106,8 @@ public class LogisticPerceptron implements Classifier{
 		for (int i = 0; i < weights.length - 1; i++){
 			sum += weights[i] * instance.value(i);
 		}
-		// Account for bias weight -- always 1 in this case
-		sum += weights[weights.length - 1] * bias;
-		return (sum >= 0) ? 1 : -1; 
+		// Use logistic function
+		return (1 / (1 + Math.pow(e, -lambda * (sum))) == 0) ? -1 : 1; 
 	}
 	
 	// Provided code from lecture slides
@@ -141,8 +140,8 @@ public class LogisticPerceptron implements Classifier{
 			+ 		"Training epochs: " + epochs + "\n"
 			+ 		"Learning rate : " + learningRate + "\n"
 			+ 		"Lamda Value : " + lambda + "\n\n"
-			+     "Total # weight updates = " + totalWeightUpdates + "\n"
-			+			"Final Weights: \n" + weights[0] +"\n" + weights[1] + "\n" + weights[2];
+			+     	"Total # weight updates = " + totalWeightUpdates + "\n"
+			+		"Final Weights: \n" + weights[0] +"\n" + weights[1] + "\n" + weights[2];
 		return report;
 	}
 
@@ -159,10 +158,5 @@ public class LogisticPerceptron implements Classifier{
 		return 0;
 	}
 }
-
-//for(int i = 0; i < weights.length; i++) 
-//{
-	//weights[i] = ThreadLocalRandom.current().nextDouble(0,1); 
-//}
 
 
