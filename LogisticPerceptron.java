@@ -66,9 +66,6 @@ public class LogisticPerceptron implements Classifier{
 		for(int i = 0; i < first.numAttributes(); i++){
 			weights[i] = 0.0;
 		}
-		
-		// Adjust last weight to account for the bias
-		weights[weights.length - 1] = bias;
 	
 		// Perceptron Rule
 		for(int epoch = 0; epoch < epochs; epoch++){
@@ -84,17 +81,20 @@ public class LogisticPerceptron implements Classifier{
 				//System.out.println("comparing actual:" + actual + " to expected: " + expected);
 				
 				if (actual == expected){
+					// Do nothing
 					System.out.print(1);
-				} else {
+				} else if (actual == 1 || actual == -1){
 					System.out.print(0);
+					// Change weights
 					for (int j = 0; j < weights.length - 1; j++){
 						weightChange = (2 * actual) * learningRate * instance.value(j);
 						weights[j] += weightChange;
 					}
-					// Update the weight accounted for bias
-					weightChange = (2 * actual) * learningRate  * getActual(instance);
-					weights[weights.length - 1] += weightChange;
+					// Update bias weight
+					weights[weights.length - 1] =  (2 * actual) * learningRate * bias;
 					totalWeightUpdates++;
+				} else {
+					System.out.println("Error occurred");
 				}
 			}
 			System.out.println();
@@ -103,9 +103,11 @@ public class LogisticPerceptron implements Classifier{
 	
 	public double predict(Instance instance){
 		double sum = 0;  
-		for (int i = 0; i < weights.length; i++){
-			sum += bias * weights[i] * instance.value(0);
+		for (int i = 0; i < weights.length - 1; i++){
+			sum += weights[i] * instance.value(i);
 		}
+		// Account for bias weight -- always 1 in this case
+		sum += weights[weights.length - 1] * bias;
 		return (sum >= 0) ? 1 : -1; 
 	}
 	
