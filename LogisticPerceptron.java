@@ -78,7 +78,7 @@ public class LogisticPerceptron implements Classifier{
 				double expected = predict(instance);
 				double actual = getActual(instance);
 			
-				System.out.println("comparing actual:" + actual + " to expected: " + expected);
+				//System.out.println("comparing actual:" + actual + " to expected: " + expected);
 				
 				if (actual == expected){
 					// Do nothing
@@ -87,11 +87,13 @@ public class LogisticPerceptron implements Classifier{
 					System.out.print(0);
 					// Change weights
 					for (int j = 0; j < weights.length - 1; j++){
+						// weightChange = learningRate * (actual - expected) * derivF(net(instance)) * instance.value(j);
 						weightChange = (2 * actual) * learningRate * instance.value(j);
 						weights[j] += weightChange;
 					}
 					// Update bias weight
-					weights[weights.length - 1] =  (2 * actual) * learningRate * bias;
+					// weights[weights.length - 1] = weights[weights.length - 1] + learningRate * (actual - expected) * derivF(net(instance)) * bias;
+					weights[weights.length - 1] = weights[weights.length - 1] + (2 * actual) * learningRate  * bias;
 					totalWeightUpdates++;
 				} else {
 					System.out.println("Error occurred");
@@ -102,12 +104,21 @@ public class LogisticPerceptron implements Classifier{
 	}
 	
 	public double predict(Instance instance){
-		double sum = 0;  
+		double net = net(instance);
+		return (1 / (1 + Math.pow(e, -lambda * net))) > 0 ? 1 : -1; 
+	}
+	
+	public double net(Instance instance){
+		double net = 0;  
 		for (int i = 0; i < weights.length - 1; i++){
-			sum += weights[i] * instance.value(i);
+			net += weights[i] * instance.value(i);
 		}
-		// Use logistic function
-		return (1 / (1 + Math.pow(e, -lambda * (sum))) == 0) ? -1 : 1; 
+		net += weights[weights.length - 1] * bias;
+		return net;
+	}
+	
+	public double derivF(double net) {
+		return (lambda * Math.pow(e, -lambda * net)) / Math.pow((1 + Math.pow(e, -lambda * net)), 2);
 	}
 	
 	// Provided code from lecture slides
@@ -128,9 +139,9 @@ public class LogisticPerceptron implements Classifier{
 	
 	public double getActual(Instance instance){
 		if (instance.value(2) == 0){
-			return 1;
+			return 1; // a
 		} else {
-			return -1;
+			return -1; // b
 		}
 	}
 	
